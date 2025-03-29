@@ -8,6 +8,7 @@ struct NO {
 };
 
 NO* primeiro = NULL;
+NO* ultimo = NULL;
 
 // headers
 void menu();
@@ -17,7 +18,7 @@ void exibirElementos();
 void inserirElemento();
 void excluirElemento();
 void buscarElemento();
-NO* posicaoElemento(int numero);
+//NO* posicaoElemento(int numero);
 //--------------------------
 
 
@@ -31,7 +32,7 @@ void menu()
 	int op = 0;
 	while (op != 7) {
 		system("cls"); // somente no windows
-		cout << "Menu Lista Ligada";
+		cout << "Menu Lista Ligada Ordenada";
 		cout << endl << endl;
 		cout << "1 - Inicializar Lista \n";
 		cout << "2 - Exibir quantidade de elementos \n";
@@ -114,7 +115,7 @@ void exibirElementos()
 
 void inserirElemento()
 {
-	// aloca memoria dinamicamente para o novo elemento
+
 	NO* novo = (NO*)malloc(sizeof(NO));
 	if (novo == NULL)
 	{
@@ -128,26 +129,110 @@ void inserirElemento()
 	if (primeiro == NULL)
 	{
 		primeiro = novo;
+		ultimo = novo;
 	}
-	else
-	{
-		// procura o final da lista
-		NO* aux = primeiro;
-		while (aux->prox != NULL) {
-			aux = aux->prox;
+	else {
+
+		NO* atual = primeiro;
+		NO* antes = NULL;
+
+
+		while (atual != NULL && atual->valor < novo->valor) {
+			antes = atual;
+			atual = atual->prox;
 		}
-		aux->prox = novo;
+
+		if (atual != NULL && atual->valor == novo->valor) {
+			cout << "Elemento já existe na lista\n";
+			free(novo);
+			return;
+		}
+
+		if (antes == NULL) {
+			novo->prox = primeiro;
+			primeiro = novo;
+		}
+
+		else {
+			antes->prox = novo;
+			novo->prox = atual;
+		}
+
+		if (novo->prox == NULL) {
+			ultimo = novo;
+		}
 	}
 }
 
 void excluirElemento()
 {
+	int excluir;
+	bool encontrei = false;
+	NO* aux;
+	NO* antes;
+
+	aux = primeiro;
+	antes = primeiro;
+
+	if (aux == NULL) {
+		cout << "Lista vazia\n";
+		return;
+	}
+	else {
+		cout << "Digite o elemento que deseja excluir: ";
+		cin >> excluir;
+
+		while (aux != NULL) {
+			if (aux->valor == excluir) {
+				encontrei = true;
+				if (aux == primeiro) {
+					primeiro = aux->prox;
+
+				}
+				else {
+					antes->prox = aux->prox;
+
+				}
+
+				free(aux);
+				cout << "\n elemento excluido\n";
+				return;
+			}
+
+			antes = aux;
+			aux = aux->prox;
+		}
+	}
+
+	if (!encontrei) {
+		cout << "Elemento não encontrado\n";
+	}
 
 }
 
 void buscarElemento()
 {
+	int pos = 0;
+	int busca = 0;
+	cout << "Digite o elemento que deseja buscar; ";
+	cin >> busca;
+
+	NO* aux = primeiro;
+
+	while (aux != NULL) {
+		if (aux->valor == busca) {
+			break;
+		}
+		aux = aux->prox;
+		pos++;
+	}
+
+
+	if (aux == NULL) {
+		cout << "Elemento nao encontrado" << endl;
+	}
+	else {
+		cout << "O elemento " << aux->valor << " foi encontrado na posição: " << pos << endl;
+	}
 
 }
-
-
